@@ -1,29 +1,34 @@
 let viewer;
 
+let taaRenderPass;
+
+window.devicePixelRatio=1.5;
+
 class Viewer {
 
     constructor (container, glbfile) {
-        var camera, scene, renderer, controls;
+        var camera, scene, renderer, controls, composer;
+
+        scene = new THREE.Scene();
+        //scene.background = new THREE.Color(0x300a24);
 
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
         camera.position.y = 2.0;
         camera.position.z = 9.0;
-
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x300a24);
-
-        var ambientLight = new THREE.AmbientLight(0xcccccc, 0.3);
-        scene.add(ambientLight);
-
-        var pointLight = new THREE.PointLight(0xffffff, 0.8);
-        pointLight.position.set(3, 3, 0);
-        camera.add(pointLight);
         scene.add(camera);
 
-        var onProgress = function (xhr) {};
-        var onError = function (e) {
-            console.log(e);
-        };
+        var ambientLight = new THREE.AmbientLight(0xcccccc, 0.6);
+        scene.add(ambientLight);
+
+        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set( 130, 120, -17 );
+            dirLight.shadow.camera.near = 0.01;
+            dirLight.castShadow = true;
+            dirLight.shadow.bias = -0.0005;
+            dirLight.shadow.mapSize.width = 128;
+            dirLight.shadow.mapSize.height = 128;
+            dirLight.shadow.radius = 3;
+        scene.add(dirLight);
 
         var loader = new THREE.GLTFLoader();
         loader.setMeshoptDecoder(MeshoptDecoder);
@@ -33,34 +38,69 @@ class Viewer {
 
             gltf.scene.scale.set(scale, scale, scale);
             gltf.scene.position.set(0, 0, 0);
+            gltf.scene.children[0].children.map(i=>{
+                i.receiveShadow = true;
+            })
 
             scene.add(gltf.scene);
 
             this.initDragControls(gltf.scene.children[0].children);
-        }, onProgress, onError);
+        });
 
 
-        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer(); // { antialias: true }
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.VSMShadowMap;
         container.appendChild(renderer.domElement);
 
+        // add Post-processing effects (temporal: anti-aliasing, shadow map jitter, and SSAO jitter)
+        composer = new THREE.EffectComposer( renderer );
+        taaRenderPass = new THREE.TAARenderPass( scene, camera );
+        taaRenderPass.unbiased = false;
+        taaRenderPass.sampleLevel = 0;
+        taaRenderPass.enabled = true;
+        taaRenderPass.accumulate = false;
+        taaRenderPass.index = 0;
+        composer.addPass( taaRenderPass );
+
+        var copyPass = new THREE.ShaderPass( THREE.CopyShader );
+        composer.addPass( copyPass );
+
+/*
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        var ssaoPass = new THREE.SSAOPass( scene, camera, width, height );
+        ssaoPass.kernelRadius = 16;
+        ssaoPass.minDistance = 0.00001;
+        ssaoPass.maxDistance = 0.0005;
+        composer.addPass( ssaoPass );
+*/        
+
+        
 
 
         // add Orbit controls
         controls = new THREE.OrbitControls( camera, renderer.domElement );
-        controls.maxPolarAngle = Math.PI * 0.5;
+        controls.maxPolarAngle = Math.PI * 0.52;
         controls.minDistance = 1;
         controls.maxDistance = 500;
         controls.enableDamping = true;
         controls.enableKeys = true;
-        controls.zoomSpeed = 0.2
-        controls.target = new THREE.Vector3( 0, 0, 0 ); 
+        controls.zoomSpeed = 0.4
+        controls.target = new THREE.Vector3( 0, 0, 0 );
+        controls.addEventListener( 'change', e => {
+            taaRenderPass.accumulate = false;
+        });
+        setInterval(()=>{taaRenderPass.accumulate = true},500)
+
 
         this.clock = new THREE.Clock();        
         this.camera = camera;
         this.scene = scene;
         this.renderer = renderer;
+        this.composer = composer;
         this.controls = controls;
         this.render();
 
@@ -75,6 +115,10 @@ class Viewer {
             e.object.material.emissive.set( 0xaaaaaa );
         });
 
+        drag.addEventListener( 'drag', e => {
+            taaRenderPass.accumulate = false;
+        });
+
         drag.addEventListener( 'dragend', e => {
             e.object.material.emissive.set( 0x000000 );
         });
@@ -85,8 +129,10 @@ class Viewer {
             this.drag.deactivate();
             this.controls.enabled = true;
 
-            if (e.charCode == 113)
+            if (e.charCode == 113) {
+                taaRenderPass.accumulate = false;
                 this.toggleClippingPlane();
+            }
 
             if (e.charCode == 100) {
                 this.drag.activate();
@@ -106,13 +152,14 @@ class Viewer {
     onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.composer.setSize( window.innerWidth, window.innerHeight );
     }
 
     render() {
         var delta = this.clock.getDelta();
         this.controls.update(delta);
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render();
         requestAnimationFrame(this.render.bind(this));
     }
 
@@ -122,5 +169,5 @@ class Viewer {
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.createElement('div');
     document.body.appendChild(container);
-    viewer = new Viewer(container, 'glb/ice-stadium.glb');
+    viewer = new Viewer(container, 'glb/ice-stadium.glb');//'glb/test.glb'); //
 });
