@@ -1,8 +1,5 @@
 # MMV - fast AEC web viewer
 
-<img src="https://user-images.githubusercontent.com/440241/71213288-f83dd880-2267-11ea-99cc-0f43d4706781.gif" width="700px" />
-![output](https://user-images.githubusercontent.com/440241/71213288-f83dd880-2267-11ea-99cc-0f43d4706781.gif)
-
 ![anim](https://user-images.githubusercontent.com/440241/71212884-17883600-2267-11ea-857f-74ed4223c119.gif)
 
 Goal: Load AEC models as fast as possible.
