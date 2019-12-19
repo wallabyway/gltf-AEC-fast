@@ -1,5 +1,7 @@
 # MMV - fast AEC web viewer
 
+![anim](https://user-images.githubusercontent.com/440241/71212884-17883600-2267-11ea-857f-74ed4223c119.gif)
+
 Goal: Load AEC models as fast as possible.
 
 The demo uses the glTF 'stack' to load the "Ice Stadium.NWD" in a browser in "less than 1 second". 
