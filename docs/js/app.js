@@ -24,10 +24,10 @@ class Viewer {
             dirLight.position.set( 130, 120, -17 );
             dirLight.shadow.camera.near = 0.01;
             dirLight.castShadow = true;
-            dirLight.shadow.bias = -0.0006;
-            dirLight.shadow.mapSize.width = 128;
-            dirLight.shadow.mapSize.height = 128;
-            dirLight.shadow.radius = 3;
+            dirLight.shadow.bias = -0.00001;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.radius = 1;
         scene.add(dirLight);
 
         var loader = new THREE.GLTFLoader();
@@ -165,5 +165,6 @@ class Viewer {
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.createElement('div');
     document.body.appendChild(container);
-    viewer = new Viewer(container, 'glb/ice-stadium.glb');//'glb/test.glb'); //
+    const file = window.location.hash.slice(1) || 'bath-city-north.glb';
+    viewer = new Viewer(container, `glb/${file}`);//'glb/test.glb'); //
 });
