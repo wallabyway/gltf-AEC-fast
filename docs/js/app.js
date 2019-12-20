@@ -20,11 +20,11 @@ class Viewer {
         var ambientLight = new THREE.AmbientLight(0xcccccc, 0.6);
         scene.add(ambientLight);
 
-        var dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        var dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
             dirLight.position.set( 130, 120, -17 );
             dirLight.shadow.camera.near = 0.01;
             dirLight.castShadow = true;
-            dirLight.shadow.bias = -0.0005;
+            dirLight.shadow.bias = -0.0006;
             dirLight.shadow.mapSize.width = 128;
             dirLight.shadow.mapSize.height = 128;
             dirLight.shadow.radius = 3;
@@ -58,16 +58,11 @@ class Viewer {
         // add Post-processing effects (temporal: anti-aliasing, shadow map jitter, and SSAO jitter)
         composer = new THREE.EffectComposer( renderer );
         taaRenderPass = new THREE.TAARenderPass( scene, camera );
-        taaRenderPass.unbiased = false;
         taaRenderPass.sampleLevel = 0;
-        taaRenderPass.enabled = true;
-        taaRenderPass.accumulate = false;
-        taaRenderPass.index = 0;
         composer.addPass( taaRenderPass );
 
         var copyPass = new THREE.ShaderPass( THREE.CopyShader );
         composer.addPass( copyPass );
-
 /*
         var width = window.innerWidth;
         var height = window.innerHeight;
@@ -88,6 +83,7 @@ class Viewer {
         controls.maxDistance = 500;
         controls.enableDamping = true;
         controls.enableKeys = true;
+        controls.screenSpacePanning = true;
         controls.zoomSpeed = 0.4
         controls.target = new THREE.Vector3( 0, 0, 0 );
         controls.addEventListener( 'change', e => {
