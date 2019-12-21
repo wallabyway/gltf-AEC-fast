@@ -2,7 +2,7 @@
 
 Goal: Load AEC models as fast as possible.
 
-![cityGIS](https://user-images.githubusercontent.com/440241/71231405-a2d2ed00-22a2-11ea-85e7-05f0f8a249ce.jpg)
+![stadium2](https://user-images.githubusercontent.com/440241/71235962-8179fd00-22b2-11ea-8f11-dd8c28668251.jpg)
 
 The demo uses the glTF 'stack' to load the "Ice Stadium.NWD" in a browser in "less than 1 second". 
 
