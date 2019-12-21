@@ -21,14 +21,16 @@ class Viewer {
         scene.add(ambientLight);
 
         var dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-            dirLight.position.set( 130, 120, -17 );
-            dirLight.shadow.camera.near = 0.01;
+            dirLight.position.set( 130, 120, -7 );
             dirLight.castShadow = true;
-            dirLight.shadow.bias = -0.00001;
-            dirLight.shadow.mapSize.width = 2048;
-            dirLight.shadow.mapSize.height = 2048;
-            dirLight.shadow.radius = 1;
-        scene.add(dirLight);
+            dirLight.shadow.bias = -0.0001;
+            dirLight.shadow.radius = 2;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.top = 3;
+            dirLight.shadow.camera.bottom = -3;
+            dirLight.shadow.camera.left = -4;
+            dirLight.shadow.camera.right = 4;
+        camera.add(dirLight);
 
         var loader = new THREE.GLTFLoader();
         loader.setMeshoptDecoder(MeshoptDecoder);
@@ -89,7 +91,14 @@ class Viewer {
         controls.addEventListener( 'change', e => {
             taaRenderPass.accumulate = false;
         });
-        setInterval(()=>{taaRenderPass.accumulate = true},500)
+        setInterval(()=>{
+            taaRenderPass.accumulate = true;
+            if (taaRenderPass.accumulateIndex>31) {
+                this.composer.renderToScreen=false;
+            }
+        },500);
+
+        document.addEventListener('mousemove',()=>{this.composer.renderToScreen=true});
 
 
         this.clock = new THREE.Clock();        
@@ -150,6 +159,7 @@ class Viewer {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.composer.setSize( window.innerWidth, window.innerHeight );
+        this.composer.render();
     }
 
     render() {
