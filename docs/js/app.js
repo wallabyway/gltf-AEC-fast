@@ -2,7 +2,7 @@ let viewer;
 
 let taaRenderPass;
 
-window.devicePixelRatio=1.5;
+window.devicePixelRatio=1.25;
 
 class Viewer {
 
@@ -21,16 +21,24 @@ class Viewer {
         scene.add(ambientLight);
 
         var dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-            dirLight.position.set( 130, 120, -7 );
+            dirLight.position.set( 70, 122, -7 );
             dirLight.castShadow = true;
             dirLight.shadow.bias = -0.0001;
-            dirLight.shadow.radius = 2;
+            dirLight.shadow.radius = 1;
+            dirLight.shadow.camera.top = 15;
+            dirLight.shadow.camera.bottom = -15;
+            dirLight.shadow.camera.left = -25;
+            dirLight.shadow.camera.right = 25;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+/*
             dirLight.shadow.mapSize.height = 1024;
             dirLight.shadow.camera.top = 3;
             dirLight.shadow.camera.bottom = -3;
             dirLight.shadow.camera.left = -4;
             dirLight.shadow.camera.right = 4;
-        camera.add(dirLight);
+            */
+        scene.add(dirLight);
 
         var loader = new THREE.GLTFLoader();
         loader.setMeshoptDecoder(MeshoptDecoder);
@@ -175,6 +183,6 @@ class Viewer {
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.createElement('div');
     document.body.appendChild(container);
-    const file = window.location.hash.slice(1) || 'bath-city-north.glb';
+    const file = window.location.hash.slice(1) || 'steelcase.glb.bmp';
     viewer = new Viewer(container, `glb/${file}`);//'glb/test.glb'); //
 });
