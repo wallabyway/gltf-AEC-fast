@@ -18,6 +18,7 @@ This is done using Zeux compression and three.js R108 loader.  It is based on th
 - https://threejs.org/examples/webgl_clipping.html
 - https://threejs.org/docs/#examples/en/controls/DragControls
 - https://github.com/zeux/meshoptimizer
+- blog: https://zeux.io/2019/03/11/small-fast-web/
 
 
 #### Note: 
