@@ -183,6 +183,6 @@ class Viewer {
 document.addEventListener('DOMContentLoaded', () => {
     var container = document.createElement('div');
     document.body.appendChild(container);
-    const file = window.location.hash.slice(1) || 'steelcase.glb.bmp';
+    const file = window.location.hash.slice(1) || 'ice-stadium.glb';
     viewer = new Viewer(container, `glb/${file}`);//'glb/test.glb'); //
 });
