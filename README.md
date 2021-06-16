@@ -10,6 +10,8 @@ The demo uses the glTF 'stack' to load the "Ice Stadium.NWD" in a browser in "le
 
 ### Demo: https://wallabyway.github.io/gltf-AEC-fast/
 
+### Demo2: https://wallabyway.github.io/gltf-steelcase/?gl=https://wallabyway.github.io/gltf-AEC-fast/glb/ice-stadium.glb
+
 This is done using Zeux compression and three.js R108 loader.  It is based on the discussions here:  https://github.com/KhronosGroup/glTF/issues/1699
 
 
